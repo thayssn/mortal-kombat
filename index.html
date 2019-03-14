@@ -1,153 +1,80 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
     <title>Mortal Kombat</title>
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .secret{
-            margin: 10px;
-            width: 33%;
-            height: 0;
-            padding-bottom: 33%;
-            background: green;
-            transition: 0.4s;
-            position: relative;
-        }
-
-        .secret.locked{
-            background: gray;
-        }
-
-        .secret.locked.released{
-            background: red;
-        }
-
-        .secret .clock{
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .secret.released .clock{
-            display: none;
-        }
-
-        .secret .input__wrapper{
-            background-color: rgba(0,0,0,0.3);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 5px;
-            text-align: center;
-            display: none;
-        }
-
-        .secret.locked.released .input__wrapper{
-            display: block;
-        }
-
-        .secret .input__wrapper p{
-            margin: 0;
-            margin-bottom: 10px;
-            padding: 0;
-            color: white;
-        }
-
-        .secret .input__wrapper input{
-            text-align: center;
-            background-color: transparent;
-            color: white;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="image_secret.css">
+    <link rel="stylesheet" type="text/css" href="input_secret.css">
 </head>
 <body>
-<div class="secret locked" id="secret1">
+<div id="input_secret">
+    <div class="secret locked" id="secret1">
+        <div class="clock" data-deadline="03/13/2019 15:49:30">
+            <div class="days"></div>
+            <div class="hours"></div>
+            <div class="minutes"></div>
+            <div class="seconds"></div>
+        </div>
+        <div class="input__wrapper">
+            <p>Famosa frase de MK</p>
+            <input type="text">
+        </div>
+    </div>
+    <div class="secret locked" id="secret2">
+        <div class="clock" data-deadline="03/15/2019 15:51:30">
+            <div class="days"></div>
+            <div class="hours"></div>
+            <div class="minutes"></div>
+            <div class="seconds"></div>
+        </div>
+        <div class="input__wrapper">
+            <p>Famosa frase de MK</p>
+            <input type="text">
+        </div>
+    </div>
+    <div class="secret locked" id="secret3">
+        <div class="clock" data-deadline="03/13/2019 15:52:30">
+            <div class="days"></div>
+            <div class="hours"></div>
+            <div class="minutes"></div>
+            <div class="seconds"></div>
+        </div>
+        <div class="input__wrapper">
+            <p>Famosa frase de MK</p>
+            <input type="text">
+        </div>
+    </div>
+</div>
 
-    <div class="clock" data-deadline="03/13/2019 00:41:30">
-        <div class="days"></div>
-        <div class="hours"></div>
-        <div class="minutes"></div>
-        <div class="seconds"></div>
+<div id="lock_secret" class="locked">
+    <div class="lock">
+        <div class="input__wrapper">
+            <div class="image_wrapper">
+                <img src="1.png" data-idx="1">
+            </div>
+        </div>
     </div>
-    <div class="input__wrapper">
-        <p>Famosa frase de MK</p>
-        <input type="text">
+    <div class="lock">
+        <div class="input__wrapper">
+            <div class="image_wrapper">
+                <img src="1.png" data-idx="1">
+            </div>
+        </div>
     </div>
+    <div class="lock">
+        <div class="input__wrapper">
+            <div class="image_wrapper">
+                <img src="1.png" data-idx="1">
+            </div>
+        </div>
+    </div>
+    <button id="ok">Ok!</button>
 </div>
-<div class="secret locked" id="secret2">
-    <div class="clock" data-deadline="03/13/2019 00:42:00">
-        <div class="days"></div>
-        <div class="hours"></div>
-        <div class="minutes"></div>
-        <div class="seconds"></div>
-    </div>
-    <div class="input__wrapper">
-        <p>Famosa frase de MK</p>
-        <input type="text">
-    </div>
-</div>
-<div class="secret locked" id="secret3">
-    <div class="clock" data-deadline="03/13/2019 00:43:00">
-        <div class="days"></div>
-        <div class="hours"></div>
-        <div class="minutes"></div>
-        <div class="seconds"></div>
-    </div>
-    <div class="input__wrapper">
-        <p>Famosa frase de MK</p>
-        <input type="text">
-    </div>
-</div>
+
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
 <script type="text/javascript" src="countdown.js"></script>
-<script type="text/javascript">
-    let solvedSecrets = JSON.parse(localStorage.getItem('solved')) || [];
-    for (let item of solvedSecrets) {
-      let secret = document.querySelector(`.secret#${item}`);
-      if(secret) secret.classList.remove('locked')
-    }
-    let secrets = document.querySelectorAll('.secret.locked');
-
-    for (let secret of secrets) {
-      let input = secret.querySelector('input');
-      let clock = secret.querySelector('.clock')
-      input.secretWord = '9330d4c500c8cb74fc630527afbec78c';
-      input.addEventListener('keyup', keyuphandler);
-
-      let deadline = clock.dataset.deadline;
-
-      if (getTimeRemaining(deadline).total > 0) {
-        initializeClock(clock, deadline, () => {
-          console.log('finished!')
-            secret.classList.add('released');
-        });
-      }else{
-        secret.classList.add('released');
-      }
-
-    }
-
-    function keyuphandler (e) {
-      let word = CryptoJS.MD5(this.value.toLowerCase()).toString();
-      if(word === this.secretWord){
-        console.log('correct');
-        let secret = this.closest('.secret');
-        solvedSecrets.push(secret.getAttribute('id'));
-        localStorage.setItem('solved', JSON.stringify(solvedSecrets));
-        secret.classList.remove('locked');
-        this.removeEventListener('keyup', keyuphandler);
-      }
-    }
-
-</script>
+<script type="text/javascript" src="image_secret.js"></script>
+<script type="text/javascript" src="input_secret.js"></script>
 <script>
 </script>
 </body>
